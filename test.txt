@@ -1,1 +1,2 @@
 toto je testovaci subor
+pridavam novy riadok na otestovanie
