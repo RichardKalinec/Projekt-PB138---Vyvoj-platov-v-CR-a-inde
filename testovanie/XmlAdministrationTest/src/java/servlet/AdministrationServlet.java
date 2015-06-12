@@ -9,7 +9,6 @@ package servlet;
 import java.io.File;
 import other.UploadedFile;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -142,7 +141,7 @@ public class AdministrationServlet extends HttpServlet
                 response.sendRedirect("/administration");
                 break;
             }
-            case "/delete":
+            /*case "/delete":
             {
                 String filename = URLDecoder.decode(request.getQueryString().substring(9), "UTF-8");
                 String directory = request.getServletContext().getRealPath("") + File.separator + UPLOAD_SUBFOLDER;
@@ -151,7 +150,7 @@ public class AdministrationServlet extends HttpServlet
                 request.setAttribute("files", getUploadedFiles(request));
                 response.sendRedirect("/administration");
                 break;
-            }
+            }*/
             case "/upload":
             {
                 String savePath = request.getServletContext().getRealPath("") + File.separator + UPLOAD_SUBFOLDER;
@@ -186,6 +185,35 @@ public class AdministrationServlet extends HttpServlet
                 else
                 {
                     request.setAttribute("message", "Wrong file extension.");
+                    request.setAttribute("files", getUploadedFiles(request));
+                    request.getRequestDispatcher("/administration.jsp").forward(request, response);
+                }
+                break;
+            }
+            case "/process":
+            {
+                String[] files = request.getParameterValues("selectedFiles");
+                if(files != null)
+                {
+                    if(request.getParameter("deleteFiles") != null)
+                    {
+                        String directory = request.getServletContext().getRealPath("") + File.separator + UPLOAD_SUBFOLDER;
+                        for(String filename : files)
+                        {
+                            File uploadedFile = new File(directory + File.separator + filename);
+                            uploadedFile.delete();
+                        }
+                    }
+                    else if(request.getParameter("processFiles") != null)
+                    {
+                        //
+                    }
+                    request.setAttribute("files", getUploadedFiles(request));
+                    response.sendRedirect("/administration");                    
+                }
+                else
+                {
+                    request.setAttribute("message", "You have to select at least one file.");
                     request.setAttribute("files", getUploadedFiles(request));
                     request.getRequestDispatcher("/administration.jsp").forward(request, response);
                 }

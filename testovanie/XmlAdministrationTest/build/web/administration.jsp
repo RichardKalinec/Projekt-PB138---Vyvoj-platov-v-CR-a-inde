@@ -32,38 +32,44 @@
                     <input type="submit" value="Logout"/>
                 </form>
                 <h2>Files</h2>
-                <table border="1" cellpadding="5">
-                    <thead>
-                        <tr>
-                            <th>Filename</th>
-                            <th>Uploaded</th>
-                            <th/>
-                        </tr>
-                    </thead>
-                    <c:forEach items="${files}" var="file">
-                        <tr>
-                            <td>
+                <form action="${pageContext.request.contextPath}/administration/process" method="post">
+                    <table border="1" cellpadding="5">
+                        <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Uploaded</th>
+                            </tr>
+                        </thead>
+                        <c:forEach items="${files}" var="file">
+                            <tr>
                                 <%
                                     UploadedFile file = (UploadedFile) pageContext.getAttribute("file");
                                 %>
-                                <%=file.getFilename()%>
-                            </td>
-                            <td>
-                                <%=file.getUploaded().toString()%>
-                            </td>
-                            <td>
-                                <form method="post" action="${pageContext.request.contextPath}/administration/delete?filename=${file.getFilename()}">
-                                    <input type="submit" value="Delete"/>
-                                </form>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                </table>
+                                <td>                                    
+                                    <%=file.getFilename()%>
+                                </td>
+                                <td>
+                                    <%=file.getUploaded().toString()%>
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="selectedFiles" value="${file.getFilename()}"/>
+                                </td>
+                                <!--<td>
+                                    <form method="post" action="${pageContext.request.contextPath}/administration/delete?filename=${file.getFilename()}">
+                                        <input type="submit" value="Delete"/>
+                                    </form>
+                                </td>-->
+                            </tr>
+                        </c:forEach>
+                    </table>
+                    <br/>
+                    <input type="submit" name="processFiles" value="Proecss selected"/>
+                    <input type="submit" name="deleteFiles" value="Delete selected"/>
+                </form>
                 <br/>
                 <form method="post" action="${pageContext.request.contextPath}/administration/upload" enctype="multipart/form-data" >
                     File:
-                    <input type="file" name="file"/> <br/>
-                    </br>
+                    <input type="file" name="file"/>
                     <input type="submit" value="Upload"/>
                 </form>
             </c:otherwise>

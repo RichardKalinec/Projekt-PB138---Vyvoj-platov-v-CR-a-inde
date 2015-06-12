@@ -38,6 +38,6 @@ public class UploadedFile implements Comparable<UploadedFile>
     @Override
     public int compareTo(UploadedFile o)
     {
-        return filename.compareTo(o.filename);
+        return (-1 * uploaded.compareTo(o.uploaded));
     }
 }
