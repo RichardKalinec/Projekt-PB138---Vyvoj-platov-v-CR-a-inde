@@ -31,9 +31,10 @@
                     <p>User <c:out value="${username}"/></p>
                     <input type="submit" value="Logout"/>
                 </form>
+                <br/>
                 <h2>Files</h2>
                 <form action="${pageContext.request.contextPath}/administration/process" method="post">
-                    <table border="1" cellpadding="5">
+                    <table cellpadding="15" border="1" cellpadding="5">
                         <thead>
                             <tr>
                                 <th>Filename</th>
@@ -63,18 +64,29 @@
                         </c:forEach>
                     </table>
                     <br/>
-                    <input type="submit" name="processFiles" value="Proecss selected"/>
+                    <input type="submit" name="processFiles" value="Process selected"/>
                     <input type="submit" name="deleteFiles" value="Delete selected"/>
                 </form>
-                <br/>
+                <br/><br/>
                 <form method="post" action="${pageContext.request.contextPath}/administration/upload" enctype="multipart/form-data" >
                     File:
                     <input type="file" name="file"/>
+                    <br/>
+                    Source:
+                    <select name="fileSource">
+                        <option value="none">---</option>
+                        <option value="eurostat">Eurostat</option>
+                        <option value="csu">ČSÚ</option>
+                    </select>
+                    <br/>
                     <input type="submit" value="Upload"/>
                 </form>
             </c:otherwise>
-        </c:choose>        
+        </c:choose>
+        <br/>
         <p>Links:</p>
         <a href="${pageContext.request.contextPath}/">Home</a>
+        <br/>
+        <a href="${pageContext.request.contextPath}/login">Login</a>
     </body>
 </html>
