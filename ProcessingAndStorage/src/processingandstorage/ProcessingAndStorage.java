@@ -45,16 +45,32 @@ public class ProcessingAndStorage {
         
         try
         {
+            //process data source files
             for(String arg: args)
             {
+                /* file is identified as originating from Eurostat and will be
+                 * processed according to the standard layout of files from
+                 * Eurostat with the ability to process any attributes
+                 * specifying the salaries
+                 */
                 if(arg.startsWith("eurostat"))
                 {
                     processAndStoreEurostatSalaries(arg, context);
                 }
-                else if(arg.startsWith("csu"))
+                /* file is identified as originating from CSO and will be
+                 * processed according to the fixed content and layout category
+                 * further specified in the filename, only files with content
+                 * and layout compatible with one of these fixed categories and
+                 * specified accordingly in their filenames will be processed
+                 * correctly
+                 */
+                else if(arg.startsWith("cso"))
                 {
-
+                    processAndStoreCSUSalaries(arg, context);
                 }
+                /* if none of the known sources is identified, log the error
+                 * message and skip processing the file
+                 */
                 else
                 {
                     String message = "Cannot identify known source of the file, skipping file " + arg + "!";
@@ -162,7 +178,46 @@ public class ProcessingAndStorage {
     
     private static void processAndStoreCSUSalaries(String file, Context context) throws IOException
     {
-        
+        /* file is identified as containing quarterly data about salaries in
+         * Czech Republic - overall, business sector and non-business sector -
+         * everything in the known layout
+         */
+        if(file.startsWith("quartoen", 4))
+        {
+            
+        }
+        /* file is identified as containing annual data about salaries in Czech
+         * Republic for one year for various occupations classified using
+         * CZ-NACE system - everything in the known layout
+         */
+        else if(file.startsWith("cznace", 4))
+        {
+            
+        }
+        /* file is identified as containing annual data for one year for all
+         * regions of Czech Republic for genders - everything in the known
+         * layout
+         */
+        else if(file.startsWith("reggend", 4))
+        {
+            
+        }
+        /* file is identified as containing annual data for one year for all
+         * regions of Czech Republic for various occupations classified using
+         * the main KZAM classes - everything in the known layout
+        */
+        else if(file.startsWith("regkzam", 4))
+        {
+            
+        }
+        /* if none of the known categories is identified, log the error message
+         * and skip processing the file
+         */
+        else
+        {
+            String message = "Cannot identify known content and layout category of the file from CSO, skipping file " + arg + "!";
+            LOG.warning(message);
+        }
     }
     
     private static String filterStringForDigitsAndDots(String input)
