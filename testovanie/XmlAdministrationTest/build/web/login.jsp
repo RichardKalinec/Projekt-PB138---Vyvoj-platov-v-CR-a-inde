@@ -1,7 +1,7 @@
 <%-- 
     Document   : login
     Created on : Jun 8, 2015, 7:15:16 PM
-    Author     : Marek
+    Author     : Marek Jonis
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>

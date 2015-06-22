@@ -1,14 +1,9 @@
 package other;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
+ * Provides storing of information about uploaded file.
  *
- * @author Marek
+ * @author Marek Jonis
  */
 public class UploadedFile implements Comparable<UploadedFile>
 {
@@ -36,8 +31,16 @@ public class UploadedFile implements Comparable<UploadedFile>
     }
 
     @Override
-    public int compareTo(UploadedFile o)
+    public int compareTo(UploadedFile other)
     {
-        return (-1 * uploaded.compareTo(o.uploaded));
+        if(uploaded.length() > other.uploaded.length())
+        {
+            return 1;
+        }
+        if(uploaded.length() < other.uploaded.length())
+        {
+            return -1;
+        }
+        return uploaded.compareTo(other.uploaded);
     }
 }

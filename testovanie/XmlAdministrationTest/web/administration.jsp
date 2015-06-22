@@ -1,7 +1,7 @@
 <%-- 
     Document   : administration
     Created on : Jun 8, 2015, 7:33:57 PM
-    Author     : Marek
+    Author     : Marek Jonis
 --%>
 
 <%@page import="other.UploadedFile"%>
@@ -76,7 +76,10 @@
                     <select name="fileSource">
                         <option value="none">---</option>
                         <option value="eurostat">Eurostat</option>
-                        <option value="csu">ČSÚ</option>
+                        <option value="cso-quartoen">ČSÚ - Štvrťročné dáta o platoch</option>
+                        <option value="cso-cznace">ČSÚ - Ročné dáta o platoch (systém CZ-NACE)</option>
+                        <option value="cso-reggend">ČSÚ - Ročné dáta o platoch (podľa pohlavia)</option>
+                        <option value="cso-regkzam">ČSÚ - Ročné dáta o platoch (triedy KZAM)</option>
                     </select>
                     <br/>
                     <input type="submit" value="Upload"/>

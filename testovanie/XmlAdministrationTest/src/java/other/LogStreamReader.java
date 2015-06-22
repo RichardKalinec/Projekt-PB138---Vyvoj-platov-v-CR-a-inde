@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package other;
 
 import java.io.BufferedReader;
@@ -11,8 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
+ * Runnable class for outputting stream of external application.
  *
- * @author Marek
+ * @author Marek Jonis
  */
 public class LogStreamReader implements Runnable
 {
@@ -38,7 +34,7 @@ public class LogStreamReader implements Runnable
         }
         catch(IOException ex)
         {
-            System.err.println("Error while reading from input stream of external app: " + ex.getMessage());
+            System.err.println("Error while reading from stream of external app: " + ex.getMessage());
         }
     }
 }

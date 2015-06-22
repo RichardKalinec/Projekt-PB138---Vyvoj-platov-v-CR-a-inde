@@ -1,15 +1,8 @@
 package servlet;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import java.io.File;
 import other.UploadedFile;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -24,18 +17,40 @@ import javax.servlet.http.Part;
 import other.LogStreamReader;
 
 /**
+ * Servlet taking care of administration part of web.
  *
- * @author Marek
+ * @author Marek Jonis
  */
 @WebServlet(urlPatterns = {"/administration/*"})
 @MultipartConfig
 public class AdministrationServlet extends HttpServlet
 {
+    /**
+     * Instance of process running external processing application.
+     */
     private static Process process = null;
+    
+    /**
+     * Name of directory where are files uploaded.
+     */
     public static final String UPLOAD_SUBFOLDER = "uploadedFiles";
+    
+    /**
+     * Path to processing application.
+     */
     public static final String EXTERNAL_APP = "app" + File.separator + "TestovaciaAplikacia.jar";
+    
+    /**
+     * Format for converting dates to strings.
+     */
     private static final SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
+    /**
+     * Method for obtaining all uploaded files.
+     * 
+     * @param request Servlet request.
+     * @return Sorted collection of uploaded files.
+     */
     private SortedSet<UploadedFile> getUploadedFiles(HttpServletRequest request)
     {
         File directory = new File(request.getServletContext().getRealPath("") + File.separator + UPLOAD_SUBFOLDER);
@@ -53,6 +68,12 @@ public class AdministrationServlet extends HttpServlet
         return files;
     }
     
+    /**
+     * Method for obtaining filename of uploaded file.
+     * 
+     * @param part Item received within a multipart/form-data POST request.
+     * @return Filename of uploaded file.
+     */
     private String getFileName(Part part)
     {
         for(String content : part.getHeader("content-disposition").split(";"))
@@ -65,6 +86,13 @@ public class AdministrationServlet extends HttpServlet
         return null;
     }
     
+    /**
+     * Method for finding not used filename.
+     * 
+     * @param savePath Path where are all uploaded files saved.
+     * @param filename Used filename.
+     * @return Not used filename.
+     */
     private String getNewFilename(String savePath, String filename)
     {
         String newFilename;
@@ -97,6 +125,14 @@ public class AdministrationServlet extends HttpServlet
         return newFilename;
     }
     
+    /**
+     * Method for taking care of uploading and saving file.
+     * 
+     * @param request Servlet request.
+     * @param response Servlet response.
+     * @throws ServletException Thrown when problem with servlet occurs.
+     * @throws IOException Thrown when any IO problem occurs.
+     */
     private void uploadFile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
         String savePath = request.getServletContext().getRealPath("") + File.separator + UPLOAD_SUBFOLDER;
@@ -147,6 +183,14 @@ public class AdministrationServlet extends HttpServlet
         }
     }
     
+    /**
+     * Method for deleting selected files.
+     * 
+     * @param request Servlet request.
+     * @param response Servlet response.
+     * @param filenames Array of filenames to be deleted.
+     * @throws IOException Thrown when any IO problem occurs.
+     */
     private void deleteFiles(HttpServletRequest request, HttpServletResponse response, String[] filenames) throws IOException
     {
         String directory = request.getServletContext().getRealPath("") + File.separator + UPLOAD_SUBFOLDER;
@@ -159,6 +203,15 @@ public class AdministrationServlet extends HttpServlet
         response.sendRedirect("/administration");
     }
     
+    /**
+     * Method for starting external application and passing parameters to it.
+     * 
+     * @param request Servlet request.
+     * @param response Servlet response.
+     * @param filenames Array of filenames to be processed.
+     * @throws IOException Thrown when any IO problem occurs.
+     * @throws ServletException Thrown when problem with servlet occurs.
+     */
     private void processFiles(HttpServletRequest request, HttpServletResponse response, String[] filenames) throws IOException, ServletException
     {
         if(!isProcessRunning())
@@ -190,6 +243,11 @@ public class AdministrationServlet extends HttpServlet
         }
     }
     
+    /**
+     * Method for finding out running status of external processing application.
+     * 
+     * @return True if external application is running, false otherwise.
+     */
     public static boolean isProcessRunning()
     {
         if(process == null)
@@ -211,10 +269,10 @@ public class AdministrationServlet extends HttpServlet
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request Servlet request.
+     * @param response Servlet response.
+     * @throws ServletException If a servlet-specific error occurs.
+     * @throws IOException If an I/O error occurs.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -232,10 +290,10 @@ public class AdministrationServlet extends HttpServlet
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request Servlet request.
+     * @param response Servlet response.
+     * @throws ServletException If a servlet-specific error occurs.
+     * @throws IOException If an I/O error occurs.
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -283,11 +341,11 @@ public class AdministrationServlet extends HttpServlet
     /**
      * Returns a short description of the servlet.
      *
-     * @return a String containing servlet description
+     * @return A String containing servlet description.
      */
     @Override
     public String getServletInfo()
     {
-        return "Short description";
+        return "Administration servlet";
     }
 }
