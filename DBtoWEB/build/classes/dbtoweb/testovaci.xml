@@ -1,0 +1,19 @@
+<salaries>
+    <salary povolanie="informatik" vek="20" pohlavie="muz" okres="moravsky">
+        2323
+    </salary>
+    <salary povolanie="instruktor" vek="25" pohlavie="muz" okres="moravsky">
+        1500
+    </salary>
+    <salary povolanie="strojvodca" vek="20" pohlavie="muz" okres="moravsky">
+        1000
+    </salary>
+    <salary povolanie="strojvodca" vek="20" pohlavie="muz" okres="moravsky">
+        1289
+    </salary>
+    <salary povolanie="strojvodca" vek="20" pohlavie="muz" okres="moravsky">
+        1990
+    </salary>  
+    
+    
+</salaries>
