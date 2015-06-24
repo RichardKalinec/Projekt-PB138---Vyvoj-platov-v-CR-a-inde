@@ -11,6 +11,8 @@ import org.basex.core.BaseXException;
 import org.basex.core.cmd.Close;
 import org.basex.core.cmd.Open;
 import org.basex.core.cmd.Optimize;
+import org.basex.query.QueryException;
+import org.basex.query.QueryProcessor;
 
 /**
  * Class ProcessingAndStorage processes data about salaries from given TSV
@@ -77,9 +79,15 @@ public class ProcessingAndStorage {
                 }
             }
         }
-        catch(IOException ex)
+        catch(IOException ex1)
         {
-            String msg = "Error reading file!\n" + ex.getMessage();
+            String msg = "Error reading file!\n" + ex1.getMessage();
+            LOG.severe(msg);
+            return;
+        }
+        catch(QueryException ex2)
+        {
+            String msg = "Error reading file!\n" + ex2.getMessage();
             LOG.severe(msg);
             return;
         }
@@ -110,7 +118,7 @@ public class ProcessingAndStorage {
      * @param context Database context.
      * @throws IOException 
      */
-    private static void processAndStoreEurostatSalaries(String file, Context context) throws IOException
+    private static void processAndStoreEurostatSalaries(String file, Context context) throws IOException, QueryException
     {
         //load file content separated into lines
         List<String> dataLines = Files.readAllLines(Paths.get(file));
@@ -141,7 +149,49 @@ public class ProcessingAndStorage {
 
         //prepare temporary variables
         String[] attValues = null;
-        String filteredNumericCell = "";
+        String filteredNumericCell = null;
+        //prepare generic inserting or updating query
+        String query = "let $salaries := doc('salaries.xml')/salaries\n";
+        
+        String qVariableDeclarations = "declare variable $salary as xs:string external;\n";
+        for(int attNo = 0; attNo < attributes.length; attNo++)
+        {
+            qVariableDeclarations += "declare variable $attn" + attNo + " as xs:string external;\n";
+            qVariableDeclarations += "declare variable $attv" + attNo + " as xs:string external;\n";
+        }
+        qVariableDeclarations += "declare variable $timev as xs:string external;\n";
+        
+        String qUpdatingFunctionDeclaration = "declare updating function insert-or-update-salary("
+                + "$psalaries as element(salaries), $psalary as xs:string, ";
+        for(int attNo = 0; attNo < attributes.length; attNo++)
+        {
+            qUpdatingFunctionDeclaration += "$pattn" + attNo + " as xs:string, ";
+            qUpdatingFunctionDeclaration += "$pattv" + attNo + " as xs:string, ";
+        }
+        qUpdatingFunctionDeclaration += "$ptimev as xs:string)\n{\n" +
+            "let $target-salary := $salaries/salary[@source='EUROSTAT' and ";
+        for(int attNo = 0; attNo < attributes.length; attNo++)
+        {
+            qUpdatingFunctionDeclaration += "@$pattn" + attNo + "='$pattv" + attNo + "' and ";
+        }
+        qUpdatingFunctionDeclaration += "@time = $ptimev]\n" +
+            "if(empty($target-salary))\nthen insert node <salary source='EUROSTAT' ";
+        for(int attNo = 0; attNo < attributes.length; attNo++)
+        {
+            qUpdatingFunctionDeclaration += "$pattn" + attNo + "='$pattv" + attNo + "' ";
+        }
+        qUpdatingFunctionDeclaration += "time='$ptimev'>$psalary</salary> as last into $psalaries\n";
+        qUpdatingFunctionDeclaration += "else replace value of node $target-salary with $psalary\n};\n";
+        
+        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, ";
+        for(int attNo = 0; attNo < attributes.length; attNo++)
+        {
+            qUpdatingFunctionCall += "$attn" + attNo + ", ";
+            qUpdatingFunctionCall += "$attv" + attNo + ", ";
+        }
+        qUpdatingFunctionCall += "$timev)";
+        
+        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
         //process data from the file and store it into the database
         for(int lineNumber = 1; lineNumber < dataLines.size(); lineNumber++)
         {
@@ -158,13 +208,24 @@ public class ProcessingAndStorage {
                 //if a numeric value is found, store it in the database in the appropriate way
                 if(!filteredNumericCell.isEmpty())
                 {
-                    
+                    try(QueryProcessor qp = new QueryProcessor(query, context))
+                    {
+                        qp.bind("salary", filteredNumericCell);
+                        for(int attNo = 0; attNo < attributes.length; attNo++)
+                        {
+                            qp.bind("attn" + attNo, attributes[attNo]);
+                            qp.bind("attv" + attNo, attValues[attNo]);
+                        }
+                        qp.bind("timev", times.get(columnNumber - 1));
+
+                        qp.value();
+                    }
                 }
             }
         }
     }
     
-    private static void processAndStoreCSUSalaries(String file, Context context) throws IOException
+    private static void processAndStoreCSUSalaries(String file, Context context) throws IOException, QueryException
     {
         /* file is identified as containing quarterly data about salaries in
          * Czech Republic - overall, business sector and non-business sector -
@@ -208,7 +269,7 @@ public class ProcessingAndStorage {
         }
     }
     
-    private static void processAndStoreCSUquartoen(String file, Context context) throws IOException
+    private static void processAndStoreCSUquartoen(String file, Context context) throws IOException, QueryException
     {
         //load file content separated into lines
         List<String> dataLines = Files.readAllLines(Paths.get(file));
@@ -277,7 +338,7 @@ public class ProcessingAndStorage {
         }
     }
     
-    private static void processAndStoreCSUcznace(String file, Context context) throws IOException
+    private static void processAndStoreCSUcznace(String file, Context context) throws IOException, QueryException
     {
         //load file content separated into lines
         List<String> dataLines = Files.readAllLines(Paths.get(file));
@@ -350,7 +411,7 @@ public class ProcessingAndStorage {
         }
     }
     
-    private static void processAndStoreCSUreggend(String file, Context context) throws IOException
+    private static void processAndStoreCSUreggend(String file, Context context) throws IOException, QueryException
     {
         //load file content separated into lines
         List<String> dataLines = Files.readAllLines(Paths.get(file));
@@ -451,7 +512,7 @@ public class ProcessingAndStorage {
         }
     }
     
-    private static void processAndStoreCSUregkzam(String file, Context context) throws IOException
+    private static void processAndStoreCSUregkzam(String file, Context context) throws IOException, QueryException
     {
         //load file content separated into lines
         List<String> dataLines = Files.readAllLines(Paths.get(file));
