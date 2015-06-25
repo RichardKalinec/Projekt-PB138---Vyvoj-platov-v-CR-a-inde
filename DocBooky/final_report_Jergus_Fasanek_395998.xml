@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article>
+    <articleinfo>
+    	<title>Záverečná správa</title>
+    	<subtitle>Tvorba hlavnej stránky</subtitle>
+        <author>
+            <firstname>Jerguš</firstname>
+            <surname>Fašánek</surname>
+        </author>
+    </articleinfo>
+    <section>
+    	<title>Návrh a realizácia projektu</title>
+        <para>Návrh spočíval vo vytvorení užívateľky prívetivého rozhrania na webovej stránke, takže som sa zaoberal komponentami, ktoré na stránke budú a ako na nej budu rozmiestnené.</para>
+        <para>Začal som s vytvorením samotných komponent a ich funkcionalitu som sa rozhodol zabezpečiť pomocou javascriptu. Nemal som však veľa skúseností s tvorbou webových stránok, takže som si musel najprv naštudovať HTML a CSS. Ďalším problémom bolo zakomponovať do webu ostatné časti projektu, ktoré boli vytvorené v jave, avšak aj tento problém sa dal vyriešiť.</para>
+    </section>
+    <section>
+	<title>Práca v tíme</>
+    	<para>Práca v tíme bola pre mňa výborná skúsenosť, musel som často komunikovať s ostatnými členmi a dávať si pozor na to, aby nevznikli nejaké nedorozumenia, na ktorých by sme sa neskôr zasekli. Výhodou však bolo to, že sme si navzájom mohli poradiť a pomôcť s niektorými problémami.</para>
+    </section>
+    <section>
+        <title>Zhodnotenie projektu</title>
+        <para>Pri práci na projekte som sa naučil nové veci v oblasti informatiky a aj riešiť problémy kolektívne, s tým spojená aj nová skúsenosť s nástrojom GitHub. Projekt bol zaujímavý a má určite významné praktické využitie, škoda, že počas skúškového obdobia nebolo toľko času sa mu venovať naplno.</para>
+    </section>
+</article>
