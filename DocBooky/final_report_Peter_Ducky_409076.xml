@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article>
+    <articleinfo>
+    	<title>Zaverecna sprava</title>
+    	<subtitle>Nacitanie dat a tvorba obrazkov</subtitle>
+        <author>
+            <firstname>Peter</firstname>
+            <surname>Ducky</surname>
+        </author>
+    </articleinfo>
+    <section>
+    	<title>Navrh a realizacia projektu</title>
+    	<para>Pri navrhu projektu som sa sustredil hlavne na to ako budem filtrovat data ktore sa nachadzaju v databeze a tiez aj na podobu webu kde smesi s vyvojarom webu pomahali.</para>
+        <para>Realizacia sa ukazala narocnejsia ako bol prvotny predpoklad no aj napriek tomu sa mi podarilo prekonat mnoho prekazok a dohodnutu cast projektu uspesneukoncit k mojej spokojnosti. Klucova bola praca s datami z webu a naslednatvorba dotazu pre ziskanie vsetkeho potrebneho. Nemala vyzva sa ukazala aj tvorbagrafova tabuliek no nakoniec aj tato cast dopadla uspesne</para>
+    </section>
+    <section>
+	<title>Praca v time</>
+    	<para>Praca v time bola zaujimava a jedinecna skusenost. Pravdepodobne som na nu nebol ani dost pripraveny stale som sa drzal toho co mam ja robit. Ale rozhodne mi to dalo vela boli terminy a tlak ktory bolo potrebne zvladat a nie vzdy sa to uspesne podarilo. No na koniec to bola kladna skusenost.</para>
+    </section>
+    <section>
+        <title>Zhodnotenie projektu</title>
+        <para>Projekt bol velmi zaujimavy a ma naozaj velky potencial aj mimo skoly. Napadou ako vylepsit jednotlivu pracu a jednotlive casti boli a aj stale su bohuzial nie vzdy je na vsetko cas. No aj napriek tomu hodnotim projekt velmi pozitivne dal mi naozaj vela ci uz praca v skupine alebo praca s technologiami ktore som nepoznal a do buducnosti si odnesiem vela skusenosti ktore urcite vyuzijem aj dalej.</para>
+    </section>
+</article>
