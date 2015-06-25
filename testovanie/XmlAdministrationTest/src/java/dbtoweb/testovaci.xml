@@ -1,0 +1,17 @@
+<salaries>
+    <salary nace_r2="informatik" vek="20" sex="muz" region="moravsky" time="123">
+        2323
+    </salary>
+    <salary nace_r2="instruktor" vek="25" sex="muz" region="moravsky" time="12313">
+        1500
+    </salary>
+    <salary nace_r2="strojvodca" vek="20" sex="muz" region="brnensky" time="1231">
+        1000
+    </salary>
+    <salary nace_r2="strojvodca" vek="20" sex="muz" region="prazsky" time="2121">
+        1289
+    </salary>
+    <salary nace_r2="strojvodca" vek="20" sex="muz" region="brnensky" time="2015">
+        1990
+    </salary>      
+</salaries>

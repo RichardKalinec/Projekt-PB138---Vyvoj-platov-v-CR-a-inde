@@ -1,7 +1,7 @@
 package servlet;
 
 import java.io.File;
-import other.UploadedFile;
+import admin.UploadedFile;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.SortedSet;
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
-import other.LogStreamReader;
+import admin.LogStreamReader;
 
 /**
  * Servlet taking care of administration part of web.
