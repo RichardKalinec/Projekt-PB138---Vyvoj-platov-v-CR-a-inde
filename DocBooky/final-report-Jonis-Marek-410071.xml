@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article>
+    <articleinfo>
+        <title>Záverečná správa projektu</title>
+        <subtitle>Vývoj platov v ČR a inde - Správa zdrojových súborov</subtitle>
+        <author>
+            <surname>Jonis</surname>
+            <firstname>Marek</firstname>
+        </author>
+    </articleinfo>
+    <section>
+        <title>Návrh a realizácia</title>
+        <para>Mojou úlohou pri návrhu a realizácii projektu bolo vytvorenie časti webovej aplikácie, ktorá bude slúžiť na správu zdrojových súborov. Jej cieľom bolo umožniť priamo nahrávať a mazať súbory, ktoré sa budú neskôr spracúvať do vhodnejšej podoby, konkrétne do XML databázy.</para>
+        <para>Táto zložka projektu pozostáva z dvoch častí. Prvou z nich je stránka na overenie identity užívateľa, druhá umožňuje po jej úspešnom overení samotnú správu zdrojových súborov. Obe tieto zložky sú postavené na webovej aplikácii využívajúcej servlety a JSP stránky. Aj keď moje poznatky v týchto technológiach majú medzery, dokázal som s pomocou dokumentácie a funkčných ukážok vytvoriť fungujúcu súčasť projektu.</para>
+    </section>
+    <section>
+        <title>Práca v tíme</title>
+        <para>Doteraz som nemal príliš veľa možností práce v tíme na náročnejších projektoch, takže som veľmi rád za každú skúsenosť. Vrámci návrhu a aj počas samotnej implementácie projektu sme aktívne rozoberali rôzne časti projektu, či už to boli konkrétne názory na implementáciu alebo spôsoby prepojenia jednolivých častí členov tímu. To nám určite ušetrilo veľa zbytočnej práce, čo sa ukázalo byť veľmi významné, keďže čas bol jeden z našich hlavných nepriateľov. Tieto skúsenosti môžem preto hodnotiť pozitívne a viem si predstaviť bucúcu spoluprácu v tímoch s podobnou organizáciou a komunikáciou.</para>
+    </section>
+    <section>
+        <title>Zhodnotenie projektu</title>
+        <para>Téma nášho projektu je naozaj zaujímavá a predstavovala aj značnú výzvu, keďže mnohé potrebné poznatky sme si museli najprv osvojiť a následne nadobudnuté schopnosti aj prakticky použiť. Naučil som sa princípy práce s mnohými zaujímavými technológiami a verím, že tieto poznatky môžem aj v budúcnosti reálne využiť.</para>
+        <para>Jednou z nie práve pozitívnejších častí projektu vidím v tom, že si vyžadoval príliš veľa času a často aj po mnohých hodinách náročného hľadania a skúšania neprinášal požadované výsledky. Preto aj chápem, že sa nikto nehrnul spraviť už dávnejšie podobný systém, pretože vyriešenie úplne každého problému by znamenalo výrazné predĺženie práce a objavenie nových problémov.</para>
+    </section>
+</article>
