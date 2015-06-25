@@ -67,7 +67,7 @@ public class ProcessingAndStorage {
                  */
                 else if(arg.startsWith("cso"))
                 {
-                    processAndStoreCSUSalaries(arg, context);
+                    processAndStoreCSOSalaries(arg, context);
                 }
                 /* if none of the known sources is identified, log the error
                  * message and skip processing the file
@@ -103,15 +103,14 @@ public class ProcessingAndStorage {
     /**
      * Method processAndStoreEurostatSalaries() processes TSV files from
      * Eurostat containing data about salaries with attribute descriptions
-     * in the first column of the forst row, attribute values in the first
+     * in the first column of the first row, attribute values in the first
      * column of the other rows, season (usually a year) in the remaining
-     * columns of the forst line, and data about salaries (which are filtered
+     * columns of the first line, and data about salaries (which are filtered
      * for digits and dots and only cells containing these characters are
      * actually processed) are in the rest of the file. If the record of the
      * salary with given attributes already exists, it is only updated with
-     * the new data (which can include inserting data for another seasons), or
-     * it is newly created, inserted and filled with the new data, if it
-     * doesn't.
+     * the new data, or it is newly created, filled with the new data and
+     * inserted, if it doesn't.
      * 
      * @param file A file from Eurostat to process. Data about salaries
      *             formatted as aforementioned is expected.
@@ -174,13 +173,13 @@ public class ProcessingAndStorage {
         {
             qUpdatingFunctionDeclaration += "@$pattn" + attNo + "='$pattv" + attNo + "' and ";
         }
-        qUpdatingFunctionDeclaration += "@time = $ptimev]\n" +
-            "if(empty($target-salary))\nthen insert node <salary source='EUROSTAT' ";
+        qUpdatingFunctionDeclaration += "@time='$ptimev']\n" +
+            "if(empty($target-salary))\nthen insert node <salary source=\"EUROSTAT\" ";
         for(int attNo = 0; attNo < attributes.length; attNo++)
         {
-            qUpdatingFunctionDeclaration += "$pattn" + attNo + "='$pattv" + attNo + "' ";
+            qUpdatingFunctionDeclaration += "$pattn" + attNo + "=\"$pattv" + attNo + "\" ";
         }
-        qUpdatingFunctionDeclaration += "time='$ptimev'>$psalary</salary> as last into $psalaries\n";
+        qUpdatingFunctionDeclaration += "time=\"$ptimev\">$psalary</salary> as last into $psalaries\n";
         qUpdatingFunctionDeclaration += "else replace value of node $target-salary with $psalary\n};\n";
         
         String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, ";
@@ -225,7 +224,23 @@ public class ProcessingAndStorage {
         }
     }
     
-    private static void processAndStoreCSUSalaries(String file, Context context) throws IOException, QueryException
+    /**
+     * Method processAndStoreCSOSalaries() processes TSV files from CSO
+     * containing data about salaries that fit into one of 4 recognized
+     * categories: quartoen, cznace, reggend and regkazam. Each of them is
+     * breifly explained above respective methods for processing them. If the
+     * record of the salary with given attributes already exists, it is only
+     * updated with the new data, or it is newly created, filled with the new
+     * data and inserted, if it doesn't.
+     * 
+     * @param file A file from CSO to process. Data about salaries formatted
+     *             as aforementioned is expected.
+     * @param context
+     * @throws IOException
+     * @throws QueryException 
+     */
+    
+    private static void processAndStoreCSOSalaries(String file, Context context) throws IOException, QueryException
     {
         /* file is identified as containing quarterly data about salaries in
          * Czech Republic - overall, business sector and non-business sector -
@@ -269,6 +284,16 @@ public class ProcessingAndStorage {
         }
     }
     
+    /**
+     * Method processAndStoreCSUquartoen() prcesses files from CSO containing
+     * quarterly data about salaries in Czech Republic - overall, business
+     * sector and non-business sector - everything in the known layout
+     * 
+     * @param file Filename of the file to process.
+     * @param context Database context.
+     * @throws IOException
+     * @throws QueryException 
+     */
     private static void processAndStoreCSUquartoen(String file, Context context) throws IOException, QueryException
     {
         //load file content separated into lines
@@ -338,6 +363,17 @@ public class ProcessingAndStorage {
         }
     }
     
+    /**
+     * Method processAndStoreCSUcznace() prcesses files from CSO containing
+     * annual data about salaries in Czech Republic for one year for various
+     * occupations classified using CZ-NACE system - everything in the known
+     * layout
+     * 
+     * @param file Filename of the file to process.
+     * @param context Database context.
+     * @throws IOException
+     * @throws QueryException 
+     */
     private static void processAndStoreCSUcznace(String file, Context context) throws IOException, QueryException
     {
         //load file content separated into lines
@@ -411,6 +447,16 @@ public class ProcessingAndStorage {
         }
     }
     
+    /**
+     * Method processAndStoreCSUreggend() prcesses files from CSO containing
+     * annual data for one year for all regions of Czech Republic for genders -
+     * everything in the known layout
+     * 
+     * @param file Filename of the file to process.
+     * @param context Database context.
+     * @throws IOException
+     * @throws QueryException 
+     */
     private static void processAndStoreCSUreggend(String file, Context context) throws IOException, QueryException
     {
         //load file content separated into lines
@@ -512,6 +558,17 @@ public class ProcessingAndStorage {
         }
     }
     
+    /**
+     * Method processAndStoreCSUregkzam() prcesses files from CSO containing
+     * annual data for one year for all regions of Czech Republic for various
+     * occupations classified using the main KZAM classes - everything in the
+     * known layout
+     * 
+     * @param file Filename of the file to process.
+     * @param context Database context.
+     * @throws IOException
+     * @throws QueryException 
+     */
     private static void processAndStoreCSUregkzam(String file, Context context) throws IOException, QueryException
     {
         //load file content separated into lines
@@ -589,6 +646,14 @@ public class ProcessingAndStorage {
         }
     }
     
+    /**
+     * Method filterStringForDigitsAndDots() filters the given string for digits
+     * and dots - if no digits or dots were in the original string, empty string
+     * is returned.
+     * 
+     * @param input Input string to filter.
+     * @return Filtered string.
+     */
     private static String filterStringForDigitsAndDots(String input)
     {
         char character = 0;
@@ -604,6 +669,14 @@ public class ProcessingAndStorage {
         return output;
     }
     
+    /**
+     * Method filterStringForDigitsAndCommas() filters the given string for
+     * digits and commas - if no digits or dots were in the original string,
+     * empty string is returned.
+     * 
+     * @param input Input string to filter.
+     * @return Filtered string.
+     */
     private static String filterStringForDigitsAndCommas(String input)
     {
         char character = 0;
