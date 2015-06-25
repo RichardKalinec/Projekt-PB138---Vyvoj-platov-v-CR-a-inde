@@ -1,17 +1,29 @@
 <salaries>
-    <salary nace_r2="informatik" vek="20" sex="muz" region="moravsky" time="123">
+    <salary source="eurostat" nace_r2="informatik" sex="muz" region="moravsky" time="123">
         2323
     </salary>
-    <salary nace_r2="instruktor" vek="25" sex="muz" region="moravsky" time="12313">
+    <salary source="eurostat" nace_r2="instruktor" sex="muz" region="moravsky" time="12313" geo="nemecko">
         1500
     </salary>
-    <salary nace_r2="strojvodca" vek="20" sex="muz" region="brnensky" time="1231">
+    <salary source="eurostat" nace_r2="strojvodca" sex="zena" region="brnensky" time="1231" geo="slovensko">
         1000
     </salary>
-    <salary nace_r2="strojvodca" vek="20" sex="muz" region="prazsky" time="2121">
+    <salary source="eurostat" nace_r2="strojvodca" sex="muz" region="prazsky" time="2121" geo="polsko">
         1289
     </salary>
-    <salary nace_r2="strojvodca" vek="20" sex="muz" region="brnensky" time="2015">
+    <salary source="eurostat" nace_r2="strojvodca" sex="zena" region="brnensky" time="2015" geo="cesko">
         1990
-    </salary>      
+    </salary>  
+    <salary source="eurostat" nace_r2="inzinier" sex="zena" region="zlinsky" time="2121" geo="polsko">
+        1289
+    </salary>
+    <salary source="eurostat" nace_r2="strojvodca" sex="zena" region="brnensky" time="2015" geo="cesko">
+        1990
+    </salary>   
+    <salary source="eurostat" nace_r2="strojvodca" sex="muz" region="prazsky" time="2121" geo="polsko">
+        1289
+    </salary>
+    <salary source="eurostat" nace_r2="strojvodca" sex="zena" region="brnensky" time="2015" geo="cesko">
+        1990
+    </salary>       
 </salaries>
