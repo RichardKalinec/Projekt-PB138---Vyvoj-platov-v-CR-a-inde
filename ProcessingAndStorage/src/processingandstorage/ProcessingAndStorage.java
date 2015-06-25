@@ -189,9 +189,9 @@ public class ProcessingAndStorage {
             qUpdatingFunctionCall += "$attn" + attNo + ", ";
             qUpdatingFunctionCall += "$attv" + attNo + ", ";
         }
-        qUpdatingFunctionCall += "$timev)";
+        qUpdatingFunctionCall += "$timev)\n";
         
-        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
+        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall + "return <void/>";
         //process data from the file and store it into the database
         for(int lineNumber = 1; lineNumber < dataLines.size(); lineNumber++)
         {
@@ -355,9 +355,9 @@ public class ProcessingAndStorage {
             + "currency=\"$pcurrency\" sector=\"$psector\" time=\"$ptime\">$psalary</salary> as last into $psalaries\n"
             + "else replace value of node $target-salary with $psalary\n};\n";
         
-        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $currency, $sector, $time)";
+        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $currency, $sector, $time)\n";
         
-        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
+        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall + "return <void/>";
         
         /* process quarterly data about salaries for every year and store it into the database,
          * continuously arranged groups of four lines for every year expected
@@ -497,9 +497,9 @@ public class ProcessingAndStorage {
             + "else replace value of node $target-salary with $psalary\n};\n";
         
         String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $cz-nace, "
-            + "$calculation-employees, $time)";
+            + "$calculation-employees, $time)\n";
         
-        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
+        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall + "return <void/>";
 
         /* load overall sectors salaries with the attribute cz_nace set to OVERALL
          * to prevent conflict with general data
@@ -639,9 +639,10 @@ public class ProcessingAndStorage {
             + "$psalary</salary> as last into $psalaries\n"
             + "else replace value of node $target-salary with $psalary\n};\n";
         
-        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $currency, $sector, $time)";
+        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $currency, $ecase, "
+                + "$region, $sex, $time)\n";
         
-        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
+        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall + "return <void/>";
 
         /* load overall salaries in the Czech republic and store them into the database
          * with the attribute sector set to overall to prevent conflict with general data
@@ -888,9 +889,10 @@ public class ProcessingAndStorage {
             + "$psalary</salary> as last into $psalaries\n"
             + "else replace value of node $target-salary with $psalary\n};\n";
         
-        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $currency, $sector, $time)";
+        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $currency, $region, "
+                + "$main-kzam-class, $time)\n";
         
-        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
+        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall + "return <void/>";
         
         //prepare temporary variables
         String region = null;
