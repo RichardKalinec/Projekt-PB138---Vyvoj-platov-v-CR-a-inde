@@ -56,6 +56,7 @@ public class DBtoWEB {
                 values[i-1] = GetValues(proc);
             }
         }
+        context.close();
         return GraphImage(dir, values, comparision);
     }
     
@@ -92,6 +93,7 @@ public class DBtoWEB {
                 }
             }
         }
+        context.close();
         return TableImage(dir, values, comparision, comparision2);
     }
     
@@ -115,8 +117,9 @@ public class DBtoWEB {
         ig2.drawRect((i-1)*75+25, tempY, 20, height-20-tempY);
         ig2.drawString(String.format("%.1f", values[i-1]), (i-1)*75+25, tempY-10);
       }
-      String path = dir + File.separator + "images/graph_"+names[0]+"_Image.JPG";
-      ImageIO.write(bi, "PNG", new File(path));
+      String path = dir + File.separator + "images" + File.separator + "graph_"+names[0]+"_Image.jpg";
+        System.out.println(path);
+      ImageIO.write(bi, "JPG", new File(path));
       return path;
     }
     
@@ -152,8 +155,9 @@ public class DBtoWEB {
                 }
             }
         }
-        String path = dir + File.separator + "images/table_"+comparision[0]+"_"+comparision2[0]+"_Image.JPG";
-        ImageIO.write(bi, "PNG", new File(path));
+        String path = dir + File.separator + "images" + File.separator + "table_"+comparision[0]+"_"+comparision2[0]+"_Image.jpg";
+        System.out.println(path);
+        ImageIO.write(bi, "JPG", new File(path));
         return path;
     }
     

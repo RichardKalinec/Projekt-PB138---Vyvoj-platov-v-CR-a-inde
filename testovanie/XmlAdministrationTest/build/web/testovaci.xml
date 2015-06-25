@@ -1,17 +1,18 @@
+<?xml version="1.0"?>
 <salaries>
-    <salary povolanie="informatik" vek="20" pohlavie="muz" okres="moravsky" time="123">
+    <salary source="eurostat" nace_r2="informatik" vek="20" sex="muz" region="moravsky" time="123">
         2323
     </salary>
-    <salary povolanie="instruktor" vek="25" pohlavie="muz" okres="moravsky" time="12313">
+    <salary source="eurostat" nace_r2="instruktor" vek="25" sex="muz" region="moravsky" time="12313">
         1500
     </salary>
-    <salary povolanie="strojvodca" vek="20" pohlavie="muz" okres="brnensky" time="1231">
+    <salary source="eurostat" nace_r2="strojvodca" vek="20" sex="muz" region="brnensky" time="1231">
         1000
     </salary>
-    <salary povolanie="strojvodca" vek="20" pohlavie="muz" okres="prazsky" time="2121">
+    <salary nace_r2="strojvodca" vek="20" sex="muz" region="prazsky" time="2121">
         1289
     </salary>
-    <salary povolanie="strojvodca" vek="20" pohlavie="muz" okres="brnensky" time="2015">
+    <salary nace_r2="strojvodca" vek="20" sex="muz" region="brnensky" time="2015">
         1990
     </salary>      
 </salaries>
