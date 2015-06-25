@@ -45,7 +45,7 @@ public class DBtoWEB {
         String filtersAsString = GetFiltersAsString(filters);
         for(int i = 1; i < comparision.length; i++)
         {
-            xquery = "for $salary in doc('salaries.xml')/salaries/salary "
+            xquery = "for $salary in doc('src/salaries.xml')/salaries/salary "
                 + "where $salary[@" + comparision[0]+"="+"\""+comparision[i]+"\""
                 + filtersAsString;
             if(time == 'r')
@@ -93,7 +93,7 @@ public class DBtoWEB {
         {
             for(int j = 1;j < comparision2.length; j++)
             {
-                xquery = "for $salary in doc('salaries.xml')/salaries/salary "
+                xquery = "for $salary in doc('src/salaries.xml')/salaries/salary "
                 + "where $salary[@" + comparision[0]+"="+"\""+comparision[i]+"\"";
                 xquery += " and @" + comparision2[0]+"="+"\""+comparision2[j]+"\""+ filtersAsString;
                 if(time == 'r')

@@ -291,7 +291,7 @@
 	}
 	//sem pojde JAVA 
 	function porovnaj(){
-		if(hodnoty1count<=0) alert("Nie su zvolene ziadne parametre!-pesar");
+		if(hodnoty1count<=0) alert("Nie su zvolene ziadne parametre!");
 		else{
 			console.log("hocico");
 			var comparision1 = [];
