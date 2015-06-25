@@ -59,11 +59,11 @@ public class SufuskyServlet extends HttpServlet
             {
                 if(comparision2.length > 1)
                 {
-                    path = DBtoWEB.GetOneComparision(request.getServletContext().getRealPath(""), comparision, comparision2, filter, time.charAt(0));
+                    path = DBtoWEB.GetComparision(request.getServletContext().getRealPath(""), comparision, comparision2, filter, time.charAt(0));
                 }
                 else
                 {
-                    path = DBtoWEB.GetOneComparision(request.getServletContext().getRealPath(""), comparision, filter, time.charAt(0));
+                    path = DBtoWEB.GetComparision(request.getServletContext().getRealPath(""), comparision, filter, time.charAt(0));
                 }
             }
             catch(QueryException ex)

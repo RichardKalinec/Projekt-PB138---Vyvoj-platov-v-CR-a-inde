@@ -118,7 +118,8 @@
         <input type="hidden" name="comparision2" id="comp2"/>
         <input type="hidden" name="filter" id="compFilter"/>
         <input type="hidden" name="time" id="compTime"/>
-  	<input onclick="porovnaj()" type="submit" value="Porovnaj"/>
+        <br/><br/><br/><br/><br/><br/><br/>
+  	<input onclick="porovnaj()" type="submit" value="Porovnaj" style="width:100px;height:40px;"/>
   </form>
 </div>
 </div>
@@ -126,7 +127,7 @@
 <br><br>
 <hr>
 <c:if test="${not empty picture}">
-    <img src="${picture}" alt="Mountain View" style="width:304px;height:228px;"/>
+    <img src="${picture}" alt="obrazok"/>
 </c:if>
 
 <script type="text/javascript">
@@ -136,8 +137,8 @@
 	eurostat = [];
 	cso = [];
 	currentSource = "eurostat";
-	porovnanie1index = document.getElementById("porovnanie1").selectedIndex;
-	porovnanie2index = document.getElementById("porovnanie2").selectedIndex;
+	porovnanie1index = 0;
+	porovnanie2index = 0;
 	atributyEurostat = [{en:"geo", cz:"Krajina"},{en:"currency", cz:"Mena"},{en:"worktime", cz:"Pracovný čas"},{en:"sex", cz:"Pohlavie"},{en:"sizeclas", cz:"Trieda podniku"},{en:"nace_r2", cz:"Klasifikácia podľa NACE 2"},{en:"isco88", cz:"Klasifikácia podľa ISCO88"},{en:"estruct", cz:"Typ príjmu"},{en:"ecase", cz:"Medián"}];
 
 	atributyCSU = [{en:"currency", cz:"Mena"},{en:"sector", cz:"Sektor"},{en:"cz_nace", cz:"Klasifikácia podľa CZ-NACE"},{en:"region", cz:"Kraj"},{en:"sex", cz:"Pohlavie"},{en:"main_kzam_class", cz:"Klasifikácia odvetvia (KZAM)"}];
@@ -244,6 +245,10 @@
 				currentSource = "eurostat";
 			}
 		}
+                else {
+			if(currentSource == "eurostat") document.getElementById("zdroj").selectedIndex = 0;
+			else document.getElementById("zdroj").selectedIndex = 1;
+		}
 	}
 	function eurostatAtributes(){
 		for (var i = 0; i < atributyEurostat.length; i++) {
@@ -281,6 +286,8 @@
 		document.getElementById("hodnoty1").innerHTML = "";
 		document.getElementById("hodnoty2").innerHTML = "";
 		document.getElementById("hodnoty3").innerHTML = "";
+                hodnoty1count = 0;
+                hodnoty2count = 0;
 	}
 	//sem pojde JAVA 
 	function porovnaj(){

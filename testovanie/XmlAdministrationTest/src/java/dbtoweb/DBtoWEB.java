@@ -23,21 +23,29 @@ import javax.imageio.ImageIO;
  * @author Peter
  */
 public class DBtoWEB {
-
-    //private static final Context context = new Context();
-        
-    public static String GetOneComparision(String dir, String[] comparision, String[] filters, char time) throws  QueryException, IOException
+    /**
+     * Method for comparison of one type of parameter.
+     * 
+     * @param dir Path for storing images.
+     * @param comparision Array of attribute values.
+     * @param filters Array of filter values.
+     * @param time r - years, q - quartals.
+     * @return Relative path to created graph picture.
+     * @throws QueryException If query error.
+     * @throws IOException If Io error.
+     */
+    public static String GetComparision(String dir, String[] comparision, String[] filters, char time) throws  QueryException, IOException
     {
         Context context = new Context();
         double[] values = new double[comparision.length - 1];
-        new CreateDB("Salaries", dir + File.separator + "testovaci.xml").execute(context);
-        new Close().execute(context);
+        /*new CreateDB("Salaries", dir + File.separator + "testovaci.xml").execute(context);
+        new Close().execute(context);*/
         new Open("Salaries").execute(context);
         String xquery;
         String filtersAsString = GetFiltersAsString(filters);
         for(int i = 1; i < comparision.length; i++)
         {
-            xquery = "for $salary in /salaries/salary "
+            xquery = "for $salary in doc('salaries.xml')/salaries/salary "
                 + "where $salary[@" + comparision[0]+"="+"\""+comparision[i]+"\""
                 + filtersAsString;
             if(time == 'r')
@@ -53,19 +61,31 @@ public class DBtoWEB {
             new XQuery(xquery).execute(context);
            
             try(QueryProcessor proc = new QueryProcessor(xquery, context)) {
-                values[i-1] = GetValues(proc);
+                values[i-1] = GetValue(proc);
             }
         }
         context.close();
         return GraphImage(dir, values, comparision);
     }
     
-    public static String GetOneComparision(String dir, String[] comparision, String[] comparision2, String[] filters, char time) throws  QueryException, IOException
+    /**
+     * Method for comparison of two attributes.
+     * 
+     * @param dir Path for storing images.
+     * @param comparision Array of attribute values.
+     * @param comparision2 Array of attribute values.
+     * @param filters Array of filter values.
+     * @param time r - years, q - quartals.
+     * @return Relative path to created graph picture.
+     * @throws QueryException If query error.
+     * @throws IOException If Io error.
+     */
+    public static String GetComparision(String dir, String[] comparision, String[] comparision2, String[] filters, char time) throws  QueryException, IOException
     {
         Context context = new Context();
         double[][] values = new double[comparision.length - 1][comparision2.length-1];
-        new CreateDB("Salaries", dir + File.separator + "testovaci.xml").execute(context);
-        new Close().execute(context);
+        /*new CreateDB("Salaries", dir + File.separator + "testovaci.xml").execute(context);
+        new Close().execute(context);*/
         new Open("Salaries").execute(context);
         String xquery;
         String filtersAsString = GetFiltersAsString(filters);
@@ -73,7 +93,7 @@ public class DBtoWEB {
         {
             for(int j = 1;j < comparision2.length; j++)
             {
-                xquery = "for $salary in /salaries/salary "
+                xquery = "for $salary in doc('salaries.xml')/salaries/salary "
                 + "where $salary[@" + comparision[0]+"="+"\""+comparision[i]+"\"";
                 xquery += " and @" + comparision2[0]+"="+"\""+comparision2[j]+"\""+ filtersAsString;
                 if(time == 'r')
@@ -89,7 +109,7 @@ public class DBtoWEB {
                 new XQuery(xquery).execute(context);
            
                 try(QueryProcessor proc = new QueryProcessor(xquery, context)) {
-                    values[i-1][j-1] = GetValues(proc);
+                    values[i-1][j-1] = GetValue(proc);
                 }
             }
         }
@@ -97,6 +117,15 @@ public class DBtoWEB {
         return TableImage(dir, values, comparision, comparision2);
     }
     
+    /**
+     * Method for creating graph image.
+     * 
+     * @param dir Path for storing pictures.
+     * @param values Array of double values.
+     * @param names Array of names of attribute values.
+     * @return Relative pat to image.
+     * @throws IOException If IO error.
+     */
     private static String GraphImage(String dir, double[] values, String[] names) throws IOException
     {
       int height = 250;
@@ -117,12 +146,22 @@ public class DBtoWEB {
         ig2.drawRect((i-1)*75+25, tempY, 20, height-20-tempY);
         ig2.drawString(String.format("%.1f", values[i-1]), (i-1)*75+25, tempY-10);
       }
-      String path = dir + File.separator + "images" + File.separator + "graph_"+names[0]+"_Image.jpg";
-        System.out.println(path);
-      ImageIO.write(bi, "JPG", new File(path));
-      return path;
+      String path = dir + File.separator + "images" + File.separator + "graph_"+names[0]+"_Image.png";
+      //System.out.println(path);
+      ImageIO.write(bi, "png", new File(path));
+      return path.substring(dir.length());
     }
     
+    /**
+     * Method for creating table image.
+     * 
+     * @param dir Pah for images to store.
+     * @param values Array of double values.
+     * @param comparision Array of names of first attribute values.
+     * @param comparision2 Array of names of second attribute values.
+     * @return Relative path to picture.
+     * @throws IOException If IO error.
+     */
     private static String TableImage(String dir, double[][] values, String[] comparision, String[] comparision2) throws IOException
     {
         int height = values.length * 25 + 150;
@@ -155,12 +194,18 @@ public class DBtoWEB {
                 }
             }
         }
-        String path = dir + File.separator + "images" + File.separator + "table_"+comparision[0]+"_"+comparision2[0]+"_Image.jpg";
-        System.out.println(path);
-        ImageIO.write(bi, "JPG", new File(path));
-        return path;
+        String path = dir + File.separator + "images" + File.separator + "table_"+comparision[0]+"_"+comparision2[0]+"_Image.png";
+        //System.out.println(path);
+        ImageIO.write(bi, "png", new File(path));
+        return path.substring(dir.length());
     }
     
+    /**
+     * Method for obtaining min value.
+     * 
+     * @param values Array of values.
+     * @return Min value from array.
+     */
     private static double GetMin(double[] values)
     {
         double minimum = Double.MAX_VALUE;
@@ -174,6 +219,12 @@ public class DBtoWEB {
         return minimum;
     }
     
+    /**
+     * Method for obtaining max value.
+     * 
+     * @param values Array of values.
+     * @return Max value of array.
+     */
     private static double GetMax(double[] values)
     {
         double maximum = Double.MIN_VALUE;
@@ -187,6 +238,12 @@ public class DBtoWEB {
         return maximum;
     }
     
+    /**
+     * Creates string representation of filters for xquery query.
+     * 
+     * @param filters Array of filters.
+     * @return String for query.
+     */
     private static String GetFiltersAsString(String[] filters)
     {
         String xquery = "";
@@ -200,7 +257,14 @@ public class DBtoWEB {
         return xquery;
     }
     
-    private static double GetValues(QueryProcessor proc) throws QueryException
+    /**
+     * Method for obtaining value from xquery query.
+     * 
+     * @param proc xquery processor
+     * @return Obtained value
+     * @throws QueryException If query error. 
+     */
+    private static double GetValue(QueryProcessor proc) throws QueryException
     {
         int count = 0;
         double sum = 0;
