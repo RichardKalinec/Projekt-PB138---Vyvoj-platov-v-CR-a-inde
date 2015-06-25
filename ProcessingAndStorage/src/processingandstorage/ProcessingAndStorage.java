@@ -149,6 +149,7 @@ public class ProcessingAndStorage {
         //prepare temporary variables
         String[] attValues = null;
         String filteredNumericCell = null;
+        
         //prepare generic inserting or updating query
         String query = "let $salaries := doc('salaries.xml')/salaries\n";
         
@@ -335,7 +336,29 @@ public class ProcessingAndStorage {
 
         //prepare temporary variables
         String year = null;
+        String time = null;
         String salary = null;
+        
+        //prepare generic inserting or updating query
+        String query = "let $salaries := doc('salaries.xml')/salaries\n";
+        
+        String qVariableDeclarations = "declare variable $salary as xs:string external;\n"
+            + "declare variable $currency as xs:string external;\ndeclare variable $sector as xs:string external;\n"
+            + "declare variable $time as xs:string external;\n";
+        
+        String qUpdatingFunctionDeclaration = "declare updating function insert-or-update-salary("
+            + "$psalaries as element(salaries), $psalary as xs:string, $pcurrency as xs:string, "
+            + "$psector as xs:string, $ptime as xs:string)\n{\n"
+            + "let $target-salary := $salaries/salary[@source='CSO' and @geo='CZ' and @estruct='GRS' and "
+            + "@currency='$pcurrency' and @sector='$psector' and @time='$ptime']\n"
+            + "if(empty($target-salary))\nthen insert node <salary source=\"CSO\" geo=\"CZ\" estruct=\"GRS\""
+            + "currency=\"$pcurrency\" sector=\"$psector\" time=\"$ptime\">$psalary</salary> as last into $psalaries\n"
+            + "else replace value of node $target-salary with $psalary\n};\n";
+        
+        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $currency, $sector, $time)";
+        
+        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
+        
         /* process quarterly data about salaries for every year and store it into the database,
          * continuously arranged groups of four lines for every year expected
          */
@@ -356,9 +379,43 @@ public class ProcessingAndStorage {
             for(int quarterLine = yearLine; quarterLine < yearLine + 4; quarterLine++)
             {
                 dataCells = dataLines.get(quarterLine).split("\t");
+                time = "Q" + ((quarterLine - 6) % 4) + " " + year;
+                
                 //load overall salary and store it into the database
                 salary = dataCells[2];
-
+                try(QueryProcessor qp = new QueryProcessor(query, context))
+                {
+                    qp.bind("salary", salary);
+                    qp.bind("currency", currency);
+                    qp.bind("sector", "OVERALL");
+                    qp.bind("time", time);
+                    
+                    qp.value();
+                }
+                
+                //load salary for business sector and store it into the database
+                salary = dataCells[2];
+                try(QueryProcessor qp = new QueryProcessor(query, context))
+                {
+                    qp.bind("salary", salary);
+                    qp.bind("currency", currency);
+                    qp.bind("sector", "BUSINESS");
+                    qp.bind("time", time);
+                    
+                    qp.value();
+                }
+                
+                //load salary for non-business sector and store it into the database
+                salary = dataCells[2];
+                try(QueryProcessor qp = new QueryProcessor(query, context))
+                {
+                    qp.bind("salary", salary);
+                    qp.bind("currency", currency);
+                    qp.bind("sector", "NON-BUSINESS");
+                    qp.bind("time", time);
+                    
+                    qp.value();
+                }
             }
         }
     }
@@ -420,30 +477,88 @@ public class ProcessingAndStorage {
             LOG.warning(message);
             return;
         }
+        
+        //prepare generic inserting or updating query
+        String query = "let $salaries := doc('salaries.xml')/salaries\n";
+        
+        String qVariableDeclarations = "declare variable $salary as xs:string external;\n"
+            + "declare variable $cz-nace as xs:string external;\n"
+            + "declare variable $calculation-employees as xs:string external;\n"
+            + "declare variable $time as xs:string external;\n";
+        
+        String qUpdatingFunctionDeclaration = "declare updating function insert-or-update-salary("
+            + "$psalaries as element(salaries), $psalary as xs:string, "
+            + "$pcz-nace as xs:string, $pcalculation-employees as xs:string, $ptime as xs:string)\n{\n"
+            + "let $target-salary := $salaries/salary[@source='CSO' and @geo='CZ' and @estruct='GRS' and "
+            + "@cz_nace='$pcz-nace' and @calculation_employees='$pcalculation-employees' and @time='$ptime']\n"
+            + "if(empty($target-salary))\nthen insert node <salary source=\"CSO\" geo=\"CZ\" estruct=\"GRS\""
+            + "cz_nace=\"$pcz-nace\" calculation_employees=\"$pcalculation-employees\" time=\"$ptime\">"
+            + "$psalary</salary> as last into $psalaries\n"
+            + "else replace value of node $target-salary with $psalary\n};\n";
+        
+        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $cz-nace, "
+            + "$calculation-employees, $time)";
+        
+        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
 
-        /* load overall sectors salaries with the attribute sector set to overall
+        /* load overall sectors salaries with the attribute cz_nace set to OVERALL
          * to prevent conflict with general data
          */
         //load salary for recounted employee count and store it into the database
         String salary = dataCells[4];
+        salary = filterStringForDigitsAndCommas(dataCells[4]);
+        try(QueryProcessor qp = new QueryProcessor(query, context))
+        {
+            qp.bind("salary", salary);
+            qp.bind("cz-nace", "OVERALL");
+            qp.bind("calculation-employees", "PER_RECOUNTED_EMPLOYEE_COUNT");
+            qp.bind("time", year);
+
+            qp.value();
+        }
         //load salary for phisical persons and store it into the database
         salary = dataCells[8];
+        try(QueryProcessor qp = new QueryProcessor(query, context))
+        {
+            qp.bind("salary", salary);
+            qp.bind("cz-nace", "OVERALL");
+            qp.bind("calculation-employees", "PER_RECOUNTED_EMPLOYEE_COUNT");
+            qp.bind("time", year);
 
+            qp.value();
+        }
         //prepare temporary variables
-        String sector = null;
-        //process data obout salaries for single sectors
+        String cz_nace = null;
+        
+        //process data obout salaries for single CZ-NACE occupation groups
         for(int sectorLine = 8; sectorLine < dataLines.size(); sectorLine++)
         {
             dataCells = dataLines.get(sectorLine).split("\t");
             //load sector name
-            sector = dataCells[1];
-
+            cz_nace = dataCells[1];
+            
             //load salary for recounted employee count and store it into the database
             salary = filterStringForDigitsAndCommas(dataCells[4]);
-
+            try(QueryProcessor qp = new QueryProcessor(query, context))
+            {
+                qp.bind("salary", salary);
+                qp.bind("cz-nace", cz_nace);
+                qp.bind("calculation-employees", "PER_RECOUNTED_EMPLOYEE_COUNT");
+                qp.bind("time", year);
+                
+                qp.value();
+            }
             //load salary for phisical persons and store it into the database
             salary = filterStringForDigitsAndCommas(dataCells[8]);
-
+            try(QueryProcessor qp = new QueryProcessor(query, context))
+            {
+                qp.bind("salary", salary);
+                qp.bind("cz-nace", cz_nace);
+                qp.bind("calculation-employees", "PER_NATURAL_PERSONS");
+                qp.bind("time", year);
+                
+                qp.value();
+            }
         }
     }
     
@@ -505,28 +620,110 @@ public class ProcessingAndStorage {
             LOG.warning(message);
             return;
         }
+        
+        //prepare generic inserting or updating query
+        String query = "let $salaries := doc('salaries.xml')/salaries\n";
+        
+        String qVariableDeclarations = "declare variable $salary as xs:string external;\n"
+            + "declare variable $currency as xs:string external;\ndeclare variable $ecase as xs:string external;\n"
+            + "declare variable $region as xs:string external;\ndeclare variable $sex as xs:string external;\n"
+            + "declare variable $time as xs:string external;\n";
+        
+        String qUpdatingFunctionDeclaration = "declare updating function insert-or-update-salary("
+            + "$psalaries as element(salaries), $psalary as xs:string, $pcurrency as xs:string, "
+            + "$pregion as xs:string, $psex as xs:string, $pecase as xs:string, $ptime as xs:string)\n{\n"
+            + "let $target-salary := $salaries/salary[@source='CSO' and @geo='CZ' and  @estruct='GRS' and "
+            + "@currency='$pcurrency' and @ecase='$pecase' and @region='$pregion' and @sex='$psex' and @time='$ptime']\n"
+            + "if(empty($target-salary))\nthen insert node <salary source=\"CSO\" geo=\"CZ\" estruct=\"GRS\""
+            + "currency=\"$pcurrency\" ecase=\"$pecase\" region=\"$pregion\" sex=\"$psex\" time=\"$ptime\">"
+            + "$psalary</salary> as last into $psalaries\n"
+            + "else replace value of node $target-salary with $psalary\n};\n";
+        
+        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $currency, $sector, $time)";
+        
+        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
 
         /* load overall salaries in the Czech republic and store them into the database
          * with the attribute sector set to overall to prevent conflict with general data
          */
         //load overall gross salary for both men and women and store it into the database
         String salary = filterStringForDigitsAndCommas(dataCells[1]);
+        try(QueryProcessor qp = new QueryProcessor(query, context))
+        {
+            qp.bind("salary", salary);
+            qp.bind("currency", currency);
+            qp.bind("ecase", "OVERALL");
+            qp.bind("region", "OVERALL");
+            qp.bind("sex", "OVERALL");
+            qp.bind("time", year);
 
+            qp.value();
+        }
         //load overall gross salary for men and store it into the database
         salary = filterStringForDigitsAndCommas(dataCells[2]);
+        try(QueryProcessor qp = new QueryProcessor(query, context))
+        {
+            qp.bind("salary", salary);
+            qp.bind("currency", currency);
+            qp.bind("ecase", "OVERALL");
+            qp.bind("region", "OVERALL");
+            qp.bind("sex", "M");
+            qp.bind("time", year);
 
+            qp.value();
+        }
         //load overall gross salary for women and store it into the database
         salary = filterStringForDigitsAndCommas(dataCells[3]);
+        try(QueryProcessor qp = new QueryProcessor(query, context))
+        {
+            qp.bind("salary", salary);
+            qp.bind("currency", currency);
+            qp.bind("ecase", "OVERALL");
+            qp.bind("region", "OVERALL");
+            qp.bind("sex", "F");
+            qp.bind("time", year);
 
+            qp.value();
+        }
         //load median gross salary for both men and women and store it into the database
         salary = filterStringForDigitsAndCommas(dataCells[4]);
+        try(QueryProcessor qp = new QueryProcessor(query, context))
+        {
+            qp.bind("salary", salary);
+            qp.bind("currency", currency);
+            qp.bind("ecase", "MEDIAN");
+            qp.bind("region", "OVERALL");
+            qp.bind("sex", "OVERALL");
+            qp.bind("time", year);
 
+            qp.value();
+        }
         //load median gross salary for men and store it into the database
         salary = filterStringForDigitsAndCommas(dataCells[5]);
+        try(QueryProcessor qp = new QueryProcessor(query, context))
+        {
+            qp.bind("salary", salary);
+            qp.bind("currency", currency);
+            qp.bind("ecase", "MEDIAN");
+            qp.bind("region", "OVERALL");
+            qp.bind("sex", "M");
+            qp.bind("time", year);
 
+            qp.value();
+        }
         //load median gross salary for women and store it into the database
         salary = filterStringForDigitsAndCommas(dataCells[6]);
+        try(QueryProcessor qp = new QueryProcessor(query, context))
+        {
+            qp.bind("salary", salary);
+            qp.bind("currency", currency);
+            qp.bind("ecase", "MEDIAN");
+            qp.bind("region", "OVERALL");
+            qp.bind("sex", "F");
+            qp.bind("time", year);
 
+            qp.value();
+        }
 
         //prepare temporary variables
         String region = null;
@@ -539,22 +736,82 @@ public class ProcessingAndStorage {
 
             //load overall gross salary for both men and women and store it into the database
             salary = filterStringForDigitsAndCommas(dataCells[1]);
+            try(QueryProcessor qp = new QueryProcessor(query, context))
+            {
+                qp.bind("salary", salary);
+                qp.bind("currency", currency);
+                qp.bind("ecase", "OVERALL");
+                qp.bind("region", region);
+                qp.bind("sex", "OVERALL");
+                qp.bind("time", year);
 
+                qp.value();
+            }
             //load overall gross salary for men and store it into the database
             salary = filterStringForDigitsAndCommas(dataCells[2]);
+            try(QueryProcessor qp = new QueryProcessor(query, context))
+            {
+                qp.bind("salary", salary);
+                qp.bind("currency", currency);
+                qp.bind("ecase", "OVERALL");
+                qp.bind("region", region);
+                qp.bind("sex", "M");
+                qp.bind("time", year);
 
+                qp.value();
+            }
             //load overall gross salary for women and store it into the database
             salary = filterStringForDigitsAndCommas(dataCells[3]);
+            try(QueryProcessor qp = new QueryProcessor(query, context))
+            {
+                qp.bind("salary", salary);
+                qp.bind("currency", currency);
+                qp.bind("ecase", "OVERALL");
+                qp.bind("region", region);
+                qp.bind("sex", "F");
+                qp.bind("time", year);
 
+                qp.value();
+            }
             //load median gross salary for both men and women and store it into the database
             salary = filterStringForDigitsAndCommas(dataCells[4]);
+            try(QueryProcessor qp = new QueryProcessor(query, context))
+            {
+                qp.bind("salary", salary);
+                qp.bind("currency", currency);
+                qp.bind("ecase", "MEDIAN");
+                qp.bind("region", region);
+                qp.bind("sex", "OVERALL");
+                qp.bind("time", year);
 
+                qp.value();
+            }
             //load median gross salary for men and store it into the database
             salary = filterStringForDigitsAndCommas(dataCells[5]);
+            try(QueryProcessor qp = new QueryProcessor(query, context))
+            {
+                qp.bind("salary", salary);
+                qp.bind("currency", currency);
+                qp.bind("ecase", "MEDIAN");
+                qp.bind("region", region);
+                qp.bind("sex", "M");
+                qp.bind("time", year);
 
+                qp.value();
+            }
             //load median gross salary for women and store it into the database
             salary = filterStringForDigitsAndCommas(dataCells[6]);
+            try(QueryProcessor qp = new QueryProcessor(query, context))
+            {
+                qp.bind("salary", salary);
+                qp.bind("currency", currency);
+                qp.bind("ecase", "MEDIAN");
+                qp.bind("region", region);
+                qp.bind("sex", "F");
+                qp.bind("time", year);
 
+                qp.value();
+            }
         }
     }
     
@@ -613,18 +870,57 @@ public class ProcessingAndStorage {
             LOG.warning(message);
             return;
         }
-
+        
+        //prepare generic inserting or updating query
+        String query = "let $salaries := doc('salaries.xml')/salaries\n";
+        
+        String qVariableDeclarations = "declare variable $salary as xs:string external;\n"
+            + "declare variable $currency as xs:string external;\ndeclare variable $region as xs:string external;\n"
+            + "declare variable $main-kzam-class as xs:string external;\ndeclare variable $time as xs:string external;\n";
+        
+        String qUpdatingFunctionDeclaration = "declare updating function insert-or-update-salary("
+            + "$psalaries as element(salaries), $psalary as xs:string, $pcurrency as xs:string, "
+            + "$pregion as xs:string, $pmain-kzam-class as xs:string,$ptime as xs:string)\n{\n"
+            + "let $target-salary := $salaries/salary[@source='CSO' and @geo='CZ' and  @estruct='GRS' and "
+            + "@currency='$pcurrency' and @region='$pregion' and @main_kzam_class='$pmain-kzam-class' and @time='$ptime']\n"
+            + "if(empty($target-salary))\nthen insert node <salary source=\"CSO\" geo=\"CZ\" estruct=\"GRS\""
+            + "currency=\"$pcurrency\" region=\"$pregion\" main_kzam_class=\"$pmain-kzam-class\" time=\"$ptime\">"
+            + "$psalary</salary> as last into $psalaries\n"
+            + "else replace value of node $target-salary with $psalary\n};\n";
+        
+        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, $currency, $sector, $time)";
+        
+        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
+        
         //prepare temporary variables
         String region = null;
         int kzamClassColumn = 2;
         //load overall salary for Czech republic and store it into the database
         String salary = filterStringForDigitsAndCommas(dataCells[1]);
+        try(QueryProcessor qp = new QueryProcessor(query, context))
+        {
+            qp.bind("salary", salary);
+            qp.bind("currency", currency);
+            qp.bind("region", "OVERALL");
+            qp.bind("main-kzam-class", "OVERALL");
+            qp.bind("time", year);
 
+            qp.value();
+        }
         //load salries for single KZAM classes for Czech republic and store them into the database
         for(; kzamClassColumn < dataCells.length; kzamClassColumn++)
         {
             salary = filterStringForDigitsAndCommas(dataCells[kzamClassColumn]);
-            
+            try(QueryProcessor qp = new QueryProcessor(query, context))
+            {
+                qp.bind("salary", salary);
+                qp.bind("currency", currency);
+                qp.bind("region", "OVERALL");
+                qp.bind("main-kzam-class", lineWithKzamCells[kzamClassColumn]);
+                qp.bind("time", year);
+
+                qp.value();
+            }
         }
         
         //process data about salaries for single regions
@@ -636,12 +932,31 @@ public class ProcessingAndStorage {
 
             //load overall salary for the region and store it into the database
             salary = filterStringForDigitsAndCommas(dataCells[1]);
+            try(QueryProcessor qp = new QueryProcessor(query, context))
+            {
+                qp.bind("salary", salary);
+                qp.bind("currency", currency);
+                qp.bind("region", region);
+                qp.bind("main-kzam-class", "OVERALL");
+                qp.bind("time", year);
 
-            //load salries for single KZAM classes for Czech republic and store them into the database
+                qp.value();
+            }
+
+            //load salaries for single KZAM classes for Czech republic and store them into the database
             for(kzamClassColumn = 2; kzamClassColumn < dataCells.length; kzamClassColumn++)
             {
                 salary = filterStringForDigitsAndCommas(dataCells[kzamClassColumn]);
-                
+                try(QueryProcessor qp = new QueryProcessor(query, context))
+                {
+                    qp.bind("salary", salary);
+                    qp.bind("currency", currency);
+                    qp.bind("region", region);
+                    qp.bind("main-kzam-class", lineWithKzamCells[kzamClassColumn]);
+                    qp.bind("time", year);
+
+                    qp.value();
+                }
             }
         }
     }
