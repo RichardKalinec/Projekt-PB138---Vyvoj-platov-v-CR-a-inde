@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article>
+    <articleinfo>
+        <title>Záverečná správa o podieli na projekte</title>
+        <subtitle>Vývoj platov v ČR a inde</subtitle>
+        <author>
+            <firstname>Richard</firstname>
+            <surname>Kalinec</surname>
+        </author>
+    </articleinfo>
+    <section>
+    	<title>Návrh a realizácia projektu</title>
+    	<para>V rámci návrhu projektu som najmä vyberal najvhodnejšiu natívnu XML databázu, ktorú použijeme. Pre veľmi malú veľkosť a jednoduchosť používania som vybral BaseX.</para>
+        <para>Najprv som urobil primitívny program, ktorý vytvorí (alebo premaže v prípade, že existuje) databázu, ktorá bude slúžiť ako úložisko spracovaných dát. Následne som vytvoril program, ktorý spracúva dáta zo zdrojových súborov a ukladá ich do databázy. Najmä načítavianie dát zo súborov z ČSÚ bolo dosť prácne, keďže dáta sa mi podarilo exportovať iba vo formáte XLS, ktorý som následne manuálne konvertoval do TSV. Rozloženie dát je u nich rôznorode, preto som rozdelil súbory z ČSÚ do 4 kategórií a ak súbor nie je označený a nespĺňa zákldné náležitosti žiadnej kategórie, nespracúva sa. Najviac som sa ale potrápil s ukladaním dát do databázy, kde som najprv vyskúšal slepú uličku - ukladanie dát do databázy pomocou XQuery Update priamo z kódu. Urobil som to s použitím nesprávnej triedy. Nakoniec som to vyriešil tak, že z databázy exportujem dáta do súboru XML, tam vložím nové dáta, a tento upravený súbor vložím späť do databázy.</para>
+    </section>
+    <section>
+	<title>Práca v tíme</>
+    	<para>Bol som lídrom a hlavným organizátorom nášho tímu, čo so sebou prinášalo vyššiu zodpovednosť. Komunikácia v tíme ale prebiehala veľmi dobre, problémy nepresahujúce rámej svojej časti si väčšinou riešil každý člen samostatne. Nástroje GitHub-u na tieto účely nám nepripadali ako nápomocné pri vývoji tohto projektu, vystačili sme si s komunikáciou prostredníctvom sociálnej siete a spoločným stretnutím.</para>
+    </section>
+    <section>
+        <title>Zhodnotenie projektu</title>
+        <para>Až na programovací jazyk Java bolo pre mňa prakticky všetko, s čím som pri tomto projekte pracoval, novinkou. Tým užitočnejšie pre mňa bolo si prácu s XML aj technológiami s ním spojených vyskúšať. Taktiež som sa aspoň do základnej miery oboznámil s verzovacím systémom GitHub, ktoý v budúcnosti ešte určite použijem, takže v tomto ohľade taktiež išlo o dobrý odrazový mostík.</para>
+    </section>
+</article>
