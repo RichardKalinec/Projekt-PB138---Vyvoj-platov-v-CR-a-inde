@@ -11,7 +11,7 @@
     </articleinfo>
     <section>
         <title>Návrh a realizácia</title>
-        <para>Mojou úlohou pri návrhu a realizácii projektu bolo vytvorenie časti webovej aplikácie, ktorá bude slúžiť na správu zdrojových súborov. Jej cieľom bolo umožniť priamo nahrávať a mazať súbory, ktoré sa budú neskôr spracúvať do vhodnejšej podoby, konkrétne do XML databázy.</para>
+        <para>Mojou úlohou pri návrhu a realizácii projektu bolo vytvorenie časti webovej aplikácie, ktorá bude slúžiť na správu zdrojových súborov. Jej cieľom bolo umožniť priamo nahrávať a mazať súbory, ktoré sa budú neskôr spracúvať do vhodnejšej podoby.</para>
         <para>Táto zložka projektu pozostáva z dvoch častí. Prvou z nich je stránka na overenie identity užívateľa, druhá umožňuje po jej úspešnom overení samotnú správu zdrojových súborov. Obe tieto zložky sú postavené na webovej aplikácii využívajúcej servlety a JSP stránky. Aj keď moje poznatky v týchto technológiach majú medzery, dokázal som s pomocou dokumentácie a funkčných ukážok vytvoriť fungujúcu súčasť projektu.</para>
     </section>
     <section>
