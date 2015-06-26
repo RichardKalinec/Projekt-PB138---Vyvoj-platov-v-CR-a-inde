@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import org.basex.core.Context;
 import org.basex.core.BaseXException;
 import org.basex.core.cmd.Close;
+import org.basex.core.cmd.Execute;
 import org.basex.core.cmd.Open;
 import org.basex.core.cmd.Optimize;
 import org.basex.query.QueryException;
@@ -87,7 +88,7 @@ public class ProcessingAndStorage {
         }
         catch(QueryException ex2)
         {
-            String msg = "Error reading file!\n" + ex2.getMessage();
+            String msg = "Error processing a query!\n" + ex2.getMessage();
             LOG.severe(msg);
             return;
         }
@@ -143,7 +144,7 @@ public class ProcessingAndStorage {
         List<String> times = new ArrayList<>();
         for(int i = 1; i < dataCells.length; i++)
         {
-            times.add(dataCells[i]);
+            times.add(dataCells[i].trim());
         }
 
         //prepare temporary variables
@@ -153,13 +154,13 @@ public class ProcessingAndStorage {
         //prepare generic inserting or updating query
         String query = "let $salaries := doc('salaries.xml')/salaries\n";
         
-        String qVariableDeclarations = "declare variable $salary as xs:string external;\n";
+        /*String qVariableDeclarations = "declare variable $salary as xs:string external;\n";
         for(int attNo = 0; attNo < attributes.length; attNo++)
         {
             qVariableDeclarations += "declare variable $attn" + attNo + " as xs:string external;\n";
             qVariableDeclarations += "declare variable $attv" + attNo + " as xs:string external;\n";
         }
-        qVariableDeclarations += "declare variable $timev as xs:string external;\n";
+        qVariableDeclarations += "declare variable $timev as xs:string external;\n";*/
         
         String qUpdatingFunctionDeclaration = "declare updating function insert-or-update-salary("
                 + "$psalaries as element(salaries), $psalary as xs:string, ";
@@ -169,34 +170,34 @@ public class ProcessingAndStorage {
             qUpdatingFunctionDeclaration += "$pattv" + attNo + " as xs:string, ";
         }
         qUpdatingFunctionDeclaration += "$ptimev as xs:string)\n{\n" +
-            "let $target-salary := $salaries/salary[@source='EUROSTAT' and ";
+            "  let $target-salary := $salaries/salary[@source='EUROSTAT' and ";
         for(int attNo = 0; attNo < attributes.length; attNo++)
         {
             qUpdatingFunctionDeclaration += "@$pattn" + attNo + "='$pattv" + attNo + "' and ";
         }
         qUpdatingFunctionDeclaration += "@time='$ptimev']\n" +
-            "if(empty($target-salary))\nthen insert node <salary source=\"EUROSTAT\" ";
+            "  if(empty($target-salary))\n    then insert node <salary source=\"EUROSTAT\" ";
         for(int attNo = 0; attNo < attributes.length; attNo++)
         {
             qUpdatingFunctionDeclaration += "$pattn" + attNo + "=\"$pattv" + attNo + "\" ";
         }
         qUpdatingFunctionDeclaration += "time=\"$ptimev\">$psalary</salary> as last into $psalaries\n";
-        qUpdatingFunctionDeclaration += "else replace value of node $target-salary with $psalary\n};\n";
+        qUpdatingFunctionDeclaration += "    else replace value of node $target-salary with $psalary\n};\n";
         
-        String qUpdatingFunctionCall = "insert-or-update-salary($salaries, $salary, ";
+        String qUpdatingFunctionCall = "return insert-or-update-salary($salaries, $salary, ";
         for(int attNo = 0; attNo < attributes.length; attNo++)
         {
             qUpdatingFunctionCall += "$attn" + attNo + ", ";
             qUpdatingFunctionCall += "$attv" + attNo + ", ";
         }
-        qUpdatingFunctionCall += "$timev)\n";
+        qUpdatingFunctionCall += "$timev)";
         
-        query += qVariableDeclarations + qUpdatingFunctionDeclaration + qUpdatingFunctionCall + "return <void/>";
+        query += qUpdatingFunctionDeclaration + qUpdatingFunctionCall;
         //process data from the file and store it into the database
         for(int lineNumber = 1; lineNumber < dataLines.size(); lineNumber++)
         {
             //split line into cells
-            dataCells = dataLines.get(0).split("\t");
+            dataCells = dataLines.get(lineNumber).split("\t");
             
             //load attribute values from the first cell of the line
             attValues = dataCells[0].split(",");
@@ -208,7 +209,17 @@ public class ProcessingAndStorage {
                 //if a numeric value is found, store it in the database in the appropriate way
                 if(!filteredNumericCell.isEmpty())
                 {
-                    try(QueryProcessor qp = new QueryProcessor(query, context))
+                    query = query.replace("$salary", filteredNumericCell);
+                    for(int attNo = 0; attNo < attributes.length; attNo++)
+                    {
+                        query = query.replace("$attn" + attNo, attributes[attNo]);
+                        query = query.replace("$attv" + attNo, attValues[attNo]);
+                    }
+                    query = query.replace("$timev", times.get(columnNumber - 1));
+                    
+                    String execute = new Execute("XQUERY " + query).execute(context);
+                    System.out.println(execute);
+                    /*try(QueryProcessor qp = new QueryProcessor(query, context))
                     {
                         qp.bind("salary", filteredNumericCell);
                         for(int attNo = 0; attNo < attributes.length; attNo++)
@@ -219,7 +230,7 @@ public class ProcessingAndStorage {
                         qp.bind("timev", times.get(columnNumber - 1));
 
                         qp.value();
-                    }
+                    }*/
                 }
             }
         }
