@@ -38,14 +38,14 @@ public class DBtoWEB {
     {
         Context context = new Context();
         double[] values = new double[comparision.length - 1];
-        /*new CreateDB("Salaries", dir + File.separator + "testovaci.xml").execute(context);
-        new Close().execute(context);*/
+        new CreateDB("Salaries", dir + File.separator + "testovaci.xml").execute(context);
+        new Close().execute(context);
         new Open("Salaries").execute(context);
         String xquery;
         String filtersAsString = GetFiltersAsString(filters);
         for(int i = 1; i < comparision.length; i++)
         {
-            xquery = "for $salary in doc('src/salaries.xml')/salaries/salary "
+            xquery = "for $salary in /salaries/salary "
                 + "where $salary[@" + comparision[0]+"="+"\""+comparision[i]+"\""
                 + filtersAsString;
             if(time == 'r')
@@ -84,8 +84,8 @@ public class DBtoWEB {
     {
         Context context = new Context();
         double[][] values = new double[comparision.length - 1][comparision2.length-1];
-        /*new CreateDB("Salaries", dir + File.separator + "testovaci.xml").execute(context);
-        new Close().execute(context);*/
+        new CreateDB("Salaries", dir + File.separator + "testovaci.xml").execute(context);
+        new Close().execute(context);
         new Open("Salaries").execute(context);
         String xquery;
         String filtersAsString = GetFiltersAsString(filters);
@@ -93,7 +93,7 @@ public class DBtoWEB {
         {
             for(int j = 1;j < comparision2.length; j++)
             {
-                xquery = "for $salary in doc('src/salaries.xml')/salaries/salary "
+                xquery = "for $salary in /salaries/salary "
                 + "where $salary[@" + comparision[0]+"="+"\""+comparision[i]+"\"";
                 xquery += " and @" + comparision2[0]+"="+"\""+comparision2[j]+"\""+ filtersAsString;
                 if(time == 'r')
